@@ -1,4 +1,4 @@
-# Face Recognition (Deep Learning Upgrade)
+# Face Recognition (Deep Learning)
 
 Recognizes known faces in a live webcam feed using modern Deep Learning (dlib's ResNet model via the `face_recognition` library). This system is significantly more accurate than traditional Haar Cascades and LBPH methods.
 
