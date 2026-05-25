@@ -4,8 +4,10 @@ Recognizes known faces in a live webcam feed using modern Deep Learning (dlib's 
 
 ## Features
 - **High Accuracy:** Uses a 128-dimension face encoding for robust recognition.
-- **Real-time Optimization:** Frames are resized for faster processing while maintaining high-quality display.
-- **Easy Training:** Simply add images to the `images/` folder and run the training script.
+- **Lighting Normalization (CLAHE):** Integrates Contrast Limited Adaptive Histogram Equalization on the Y-luminance channel to handle shadows and uneven lighting.
+- **Alternate Frame Processing:** Performs detection and recognition on every other frame to minimize CPU usage and maintain high FPS.
+- **Robust Training:** Detects face locations to filter and train only on the largest face (the primary subject) in images containing multiple people, then averages encodings per person to create a single robust signature.
+- **Dynamic Visual HUD:** Displays green bounding boxes for recognized users with confidence percentages (e.g., `Sanjith (88%)`), and red boxes for unknown individuals.
 
 ## Tech Stack
 - **Python 3**
@@ -15,22 +17,27 @@ Recognizes known faces in a live webcam feed using modern Deep Learning (dlib's 
 
 ## How to Run
 
-1. **Install dependencies:**
+1. **Activate virtual environment:**
+   ```bash
+   source venv/bin/activate
+   ```
+
+2. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Prepare Dataset:**
+3. **Prepare Dataset:**
    Place training images in the `images/` folder. Create a separate subfolder for each person (the folder name will be used as their label).
 
-3. **Train the Model:**
+4. **Train the Model:**
    Extract face encodings from your images:
    ```bash
    python faces-train.py
    ```
    This generates `encodings.pickle`.
 
-4. **Run Recognition:**
+5. **Run Recognition:**
    Start the real-time webcam recognition:
    ```bash
    python "Face Recognition.py"
@@ -40,4 +47,4 @@ Recognizes known faces in a live webcam feed using modern Deep Learning (dlib's 
 ## Troubleshooting
 - **Camera Access (macOS):** Ensure your Terminal or IDE has permission to access the camera in *System Settings > Privacy & Security > Camera*.
 - **Camera Access (Windows):** Ensure "Let desktop apps access your camera" is turned ON in *Settings > Privacy & Security > Camera*.
-- **Performance:** The script resizes the internal processing frame to 1/4 size for speed. If it's still slow, ensure you aren't running other heavy applications in the background.
+- **Performance:** The script resizes the internal processing frame to 1/2 size for high-resolution detection and uses alternate-frame rendering. If it's still slow, ensure you aren't running other CPU-heavy applications in the background.
