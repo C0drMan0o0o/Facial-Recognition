@@ -34,6 +34,9 @@ while True:
         print("Error: Could not read frame.")
         break
 
+    # Flip the frame horizontally (mirror view) to prevent it from being inverted
+    frame = cv2.flip(frame, 1)
+
     # Process alternate frames to save CPU / boost FPS
     if process_this_frame:
         # Resize frame to 1/2 size for faster processing (doubling resolution from 1/4)
