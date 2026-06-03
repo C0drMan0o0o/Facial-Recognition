@@ -77,15 +77,13 @@ while True:
         face_names = []
         face_confidences = []
         for face_encoding in face_encodings:
-            # Stricter tolerance for higher accuracy
-            matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=TOLERANCE)
             name = "Unknown"
             confidence = 0
 
             face_distances = face_recognition.face_distance(known_encodings, face_encoding)
             if len(face_distances) > 0:
                 best_match_index = np.argmin(face_distances)
-                if matches[best_match_index]:
+                if face_distances[best_match_index] <= TOLERANCE:
                     name = known_names[best_match_index]
                     distance = face_distances[best_match_index]
                     confidence = min(100, int((1.0 - distance / TOLERANCE) * 100))
