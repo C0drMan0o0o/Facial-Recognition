@@ -77,14 +77,13 @@ while True:
             name = "Unknown"
             confidence = 0
 
-            # Use the known face with the smallest distance to the new face
             face_distances = face_recognition.face_distance(known_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
+            if len(face_distances) > 0:
+                best_match_index = np.argmin(face_distances)
+                if matches[best_match_index]:
                     name = known_names[best_match_index]
-                    # Compute confidence: 0.0 distance = 100%, at tolerance threshold = 0%
                     distance = face_distances[best_match_index]
-                    confidence = max(0, min(100, int((1.0 - distance / TOLERANCE) * 100)))
+                    confidence = min(100, int((1.0 - distance / TOLERANCE) * 100))
 
             face_names.append(name)
             face_confidences.append(confidence)
