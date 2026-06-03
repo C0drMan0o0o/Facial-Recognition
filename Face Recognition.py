@@ -69,6 +69,11 @@ while True:
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
+        # Scale to full-frame coordinates here so the display loop uses
+        # the same locations on both processing and cached frames.
+        face_locations = [(top * 2, right * 2, bottom * 2, left * 2)
+                          for (top, right, bottom, left) in face_locations]
+
         face_names = []
         face_confidences = []
         for face_encoding in face_encodings:
@@ -92,12 +97,6 @@ while True:
 
     # Display the results
     for (top, right, bottom, left), name, confidence in zip(face_locations, face_names, face_confidences):
-        # Scale back up face locations since the frame we detected in was scaled to 1/2 size
-        top *= 2
-        right *= 2
-        bottom *= 2
-        left *= 2
-
         # Green for known, Red for unknown
         if name == "Unknown":
             color = (0, 0, 255)  # BGR Red
