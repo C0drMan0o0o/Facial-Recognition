@@ -21,6 +21,10 @@ with open(ENCODINGS_PATH, 'rb') as f:
 known_encodings = data["encodings"]
 known_names = data["names"]
 
+if len(known_encodings) == 0:
+    print("Error: No encodings found in encodings.pickle. Please add images and re-run faces-train.py.")
+    sys.exit(1)
+
 # Initialize webcam
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
@@ -68,16 +72,15 @@ while True:
         face_names = []
         face_confidences = []
         for face_encoding in face_encodings:
-            # Compare face with lower tolerance for higher accuracy
+            # Stricter tolerance for higher accuracy
             matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=TOLERANCE)
             name = "Unknown"
             confidence = 0
 
-            if len(known_encodings) > 0:
-                # Use the known face with the smallest distance to the new face
-                face_distances = face_recognition.face_distance(known_encodings, face_encoding)
-                best_match_index = np.argmin(face_distances)
-                if matches[best_match_index]:
+            # Use the known face with the smallest distance to the new face
+            face_distances = face_recognition.face_distance(known_encodings, face_encoding)
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
                     name = known_names[best_match_index]
                     # Compute confidence: 0.0 distance = 100%, at tolerance threshold = 0%
                     distance = face_distances[best_match_index]
@@ -111,8 +114,6 @@ while True:
         cv2.rectangle(frame, (left, bottom - 35), (right, bottom), color, cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, display_text, (left + 6, bottom - 6), font, 0.8, (255, 255, 255), 1)
-
-
 
     # Display the resulting image
     cv2.imshow('Face Recognition', frame)
