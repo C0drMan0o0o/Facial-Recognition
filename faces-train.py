@@ -15,7 +15,7 @@ for root, dirs, files in os.walk(image_dir):
     if root == image_dir:
         continue  # skip images dropped directly in images/ with no person subfolder
     for file in files:
-        if file.lower().endswith(("png", "jpg", "jpeg")):
+        if file.lower().endswith((".png", ".jpg", ".jpeg")):
             path = os.path.join(root, file)
             label = os.path.basename(root).replace(" ", "-").lower()
             
