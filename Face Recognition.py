@@ -7,6 +7,7 @@ import sys
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ENCODINGS_PATH = os.path.join(BASE_DIR, "encodings.pickle")
+TOLERANCE = 0.5
 
 # Load the known faces and encodings
 print("Loading encodings...")
@@ -22,6 +23,9 @@ known_names = data["names"]
 
 # Initialize webcam
 cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("Error: Could not open webcam.")
+    sys.exit(1)
 
 print("Starting webcam... Press 'q' to quit.")
 
@@ -46,7 +50,7 @@ while True:
 
     # Process alternate frames to save CPU / boost FPS
     if process_this_frame:
-        # Resize frame to 1/2 size for faster processing (doubling resolution from 1/4)
+        # Resize frame to 1/2 size for faster processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
 
         # Apply CLAHE (Contrast Limited Adaptive Histogram Equalization) on Y-channel of YUV
@@ -65,7 +69,7 @@ while True:
         face_confidences = []
         for face_encoding in face_encodings:
             # Compare face with lower tolerance for higher accuracy
-            matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=0.5)
+            matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=TOLERANCE)
             name = "Unknown"
             confidence = 0
 
@@ -77,8 +81,7 @@ while True:
                     name = known_names[best_match_index]
                     # Compute confidence: 0.0 distance = 100%, at tolerance threshold = 0%
                     distance = face_distances[best_match_index]
-                    tolerance = 0.5
-                    confidence = max(0, min(100, int((1.0 - distance / tolerance) * 100)))
+                    confidence = max(0, min(100, int((1.0 - distance / TOLERANCE) * 100)))
 
             face_names.append(name)
             face_confidences.append(confidence)

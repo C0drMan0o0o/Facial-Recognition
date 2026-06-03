@@ -53,7 +53,8 @@ for label, encs in label_encodings.items():
 
 # Save the encodings and names to a pickle file
 data = {"encodings": known_encodings, "names": known_names}
-with open("encodings.pickle", "wb") as f:
+encodings_path = os.path.join(BASE_DIR, "encodings.pickle")
+with open(encodings_path, "wb") as f:
     pickle.dump(data, f)
 
-print(f"Training complete. Saved {len(known_encodings)} optimized encodings to encodings.pickle.")
+print(f"Training complete. Saved {len(known_encodings)} optimized encodings to {encodings_path}.")
