@@ -3,14 +3,18 @@ import cv2
 import numpy as np
 import pickle
 import os
+import sys
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ENCODINGS_PATH = os.path.join(BASE_DIR, "encodings.pickle")
 
 # Load the known faces and encodings
 print("Loading encodings...")
-if not os.path.exists('encodings.pickle'):
+if not os.path.exists(ENCODINGS_PATH):
     print("Error: encodings.pickle not found. Please run faces-train.py first.")
-    exit()
+    sys.exit(1)
 
-with open('encodings.pickle', 'rb') as f:
+with open(ENCODINGS_PATH, 'rb') as f:
     data = pickle.load(f)
 
 known_encodings = data["encodings"]
@@ -20,6 +24,9 @@ known_names = data["names"]
 cap = cv2.VideoCapture(0)
 
 print("Starting webcam... Press 'q' to quit.")
+
+# Create CLAHE once (reused every frame)
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
 
 # Initialize variables for alternate frame processing
 process_this_frame = True
@@ -44,7 +51,6 @@ while True:
 
         # Apply CLAHE (Contrast Limited Adaptive Histogram Equalization) on Y-channel of YUV
         # to normalize lighting/shadows while preserving colors.
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
         yuv = cv2.cvtColor(small_frame, cv2.COLOR_BGR2YUV)
         yuv[:, :, 0] = clahe.apply(yuv[:, :, 0])
         
@@ -69,9 +75,10 @@ while True:
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_names[best_match_index]
-                    # Compute confidence percentage (0.0 distance = 100% confidence, 0.5 distance = 50% relative to threshold)
+                    # Compute confidence: 0.0 distance = 100%, at tolerance threshold = 0%
                     distance = face_distances[best_match_index]
-                    confidence = max(0, min(100, int((1.0 - distance) * 100)))
+                    tolerance = 0.5
+                    confidence = max(0, min(100, int((1.0 - distance / tolerance) * 100)))
 
             face_names.append(name)
             face_confidences.append(confidence)
