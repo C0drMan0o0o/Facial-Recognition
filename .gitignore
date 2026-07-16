@@ -5,3 +5,5 @@ __pycache__/
 Thumbs.db
 graphify-out/
 venv/
+.idea/
+.vscode/
