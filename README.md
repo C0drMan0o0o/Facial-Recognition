@@ -6,7 +6,7 @@ Recognizes known faces in a live webcam feed using modern Deep Learning (dlib's 
 - **High Accuracy:** Uses a 128-dimension face encoding for robust recognition.
 - **Lighting Normalization (CLAHE):** Integrates Contrast Limited Adaptive Histogram Equalization on the Y-luminance channel to handle shadows and uneven lighting.
 - **Alternate Frame Processing:** Performs detection and recognition on every other frame to minimize CPU usage and maintain high FPS.
-- **Robust Training:** Detects face locations to filter and train only on the largest face (the primary subject) in images containing multiple people, then averages encodings per person to create a single robust signature.
+- **Robust Training:** Detects face locations to filter and train only on the largest face (the primary subject) in images containing multiple people, storing each image's encoding individually so multiple photos per person improve match coverage.
 - **Dynamic Visual HUD:** Displays green bounding boxes for recognized users with confidence percentages (e.g., `Sanjith (88%)`), and red boxes for unknown individuals.
 
 ## Tech Stack
