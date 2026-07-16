@@ -1,1 +1,1 @@
-python-interpreter-path = "venv/bin/python"
+python-interpreter-path = ".venv/bin/python"

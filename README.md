@@ -19,7 +19,7 @@ Recognizes known faces in a live webcam feed using modern Deep Learning (dlib's 
 
 1. **Activate virtual environment:**
    ```bash
-   source venv/bin/activate
+   source .venv/bin/activate
    ```
 
 2. **Install dependencies:**
